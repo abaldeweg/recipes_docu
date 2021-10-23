@@ -18,8 +18,6 @@ Management and export of menus.
 - MySQL
 - SSH
 
-## Screenshots
-
 ## Install with Docker
 
 Installation with Docker is the preferred way!
