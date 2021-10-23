@@ -1,0 +1,785 @@
+openapi: 3.0.0
+
+info:
+    version: 1.0.0
+    title: recipes API
+    description: Management and export of menus.
+
+externalDocs:
+    description: More
+    url: https://github.com/abaldeweg/recipes_docu
+
+servers:
+    - url: http://localhost:8000/api
+
+tags:
+    - name: user
+      description: User
+    - name: meal
+      description: Meal
+    - name: plan
+      description: Plan
+    - name: menu
+      description: Menu
+
+paths:
+    # User
+    /me:
+        get:
+            tags:
+                - user
+            description: Shows the current User
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/UserResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+    /password:
+        put:
+            tags:
+                - user
+            description: Updates the password
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required:
+                                - password
+                            properties:
+                                password:
+                                    type: string
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/UserResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+    /login_check:
+        post:
+            tags:
+                - user
+            description: Authenticates the user
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required:
+                                - username
+                                - password
+                            properties:
+                                username:
+                                    type: string
+                                password:
+                                    type: string
+            responses:
+                "200":
+                    description: Returns a new token
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                required:
+                                    - token
+                                    - refresh_token
+                                properties:
+                                    token:
+                                        type: string
+                                    refresh_token:
+                                        type: string
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+    /token/refresh:
+        post:
+            tags:
+                - user
+            description: Returns a new token
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required:
+                                - refresh_token
+                            properties:
+                                refresh_token:
+                                    type: string
+            responses:
+                "200":
+                    description: Returns the token
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                required:
+                                    - token
+                                    - refresh_token
+                                properties:
+                                    token:
+                                        type: string
+                                    refresh_token:
+                                        type: string
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+    # meals
+    /meal/:
+        get:
+            tags:
+                - meal
+            description: Returns a list of meals
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                meals:
+                                    $ref: "#/components/schemas/MealResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+    /meal/new:
+        post:
+            tags:
+                - meal
+            description: Creates a new meal
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/MealRequest"
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/MealResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+    /meal/{meal}:
+        get:
+            tags:
+                - meal
+            parameters:
+                - name: meal
+                  in: path
+                  required: true
+                  description: Name of the meal
+                  schema:
+                      type: string
+            description: Returns an meal
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/MealResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "404":
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+        put:
+            tags:
+                - meal
+            parameters:
+                - name: meal
+                  in: path
+                  required: true
+                  description: Name of the meal
+                  schema:
+                      type: string
+            description: Updates an meal
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/MealRequest"
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/MealResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "404":
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+        delete:
+            tags:
+                - meal
+            parameters:
+                - name: meal
+                  in: path
+                  required: true
+                  description: Name of the meal
+                  schema:
+                      type: string
+            description: Deletes an meal
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/MealResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "404":
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+    # plans
+    /plan/:
+        get:
+            tags:
+                - plan
+            description: Returns a list of plans
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/PlanResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+    /plan/find:
+        get:
+            tags:
+                - plan
+            description: Returns a list of plans
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/PlanResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+    /plan/new:
+        post:
+            tags:
+                - plan
+            description: Creates a new plan
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/PlanRequest"
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PlanResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+    /plan/{plan}:
+        get:
+            tags:
+                - plan
+            parameters:
+                - name: plan
+                  in: path
+                  required: true
+                  description: Name of the plan
+                  schema:
+                      type: string
+            description: Returns an plan
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PlanResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "404":
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+        put:
+            tags:
+                - plan
+            parameters:
+                - name: plan
+                  in: path
+                  required: true
+                  description: Name of the plan
+                  schema:
+                      type: string
+            description: Updates an plan
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/PlanRequest"
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PlanResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "404":
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+        delete:
+            tags:
+                - plan
+            parameters:
+                - name: plan
+                  in: path
+                  required: true
+                  description: Name of the plan
+                  schema:
+                      type: string
+            description: Deletes an plan
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PlanResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "404":
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+    # menus
+    /menu/:
+        get:
+            tags:
+                - menu
+            description: Returns a list of menus
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/MenuResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+    /menu/find:
+        get:
+            tags:
+                - menu
+            description: Returns a list of menus
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/MenuResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+    /menu/new:
+        post:
+            tags:
+                - menu
+            description: Creates a new menu
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/MenuRequest"
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/MenuResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+    /menu/{menu}:
+        get:
+            tags:
+                - menu
+            parameters:
+                - name: menu
+                  in: path
+                  required: true
+                  description: Name of the menu
+                  schema:
+                      type: string
+            description: Returns an menu
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/MenuResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "404":
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+        put:
+            tags:
+                - menu
+            parameters:
+                - name: menu
+                  in: path
+                  required: true
+                  description: Name of the menu
+                  schema:
+                      type: string
+            description: Updates an menu
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/MenuRequest"
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/MenuResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "404":
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+        delete:
+            tags:
+                - menu
+            parameters:
+                - name: menu
+                  in: path
+                  required: true
+                  description: Name of the menu
+                  schema:
+                      type: string
+            description: Deletes an menu
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/MenuResponse"
+                "401":
+                    description: Access token is missing or invalid
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+                "404":
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+    securitySchemes:
+        bearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+
+    schemas:
+        ErrorResponse:
+            type: object
+            required:
+                - code
+                - message
+            properties:
+                code:
+                    type: integer
+                message:
+                    type: string
+
+        UserResponse:
+            type: object
+            required:
+                - id
+                - username
+                - roles
+                - branch
+                - isUser
+                - isAdmin
+            properties:
+                id:
+                    type: integer
+                username:
+                    type: string
+                roles:
+                    type: array
+                    items:
+                        type: string
+                branch:
+                    type: object
+                    properties:
+                        id:
+                            type: string
+                        name:
+                            type: string
+                        steps:
+                            type: string
+                        currency:
+                            type: string
+                        ordering:
+                            type: string
+                isUser:
+                    type: boolean
+                isAdmin:
+                    type: boolean
+
+        MealRequest:
+            type: object
+            required:
+                - name
+                - description
+                - price
+                - deleted
+            properties:
+                name:
+                    type: string
+                description:
+                    type: string
+                price:
+                    type: integer
+                deleted:
+                    type: boolean
+
+        MealResponse:
+            type: object
+            required:
+                - id
+                - name
+                - description
+                - price
+                - deleted
+            properties:
+                id:
+                    type: integer
+                name:
+                    type: string
+                description:
+                    type: string
+                price:
+                    type: integer
+                deleted:
+                    type: boolean
+
+        PlanRequest:
+            type: object
+            required:
+                - year
+                - week
+                - name
+            properties:
+                year:
+                    type: integer
+                week:
+                    type: integer
+                name:
+                    type: string
+
+        PlanResponse:
+            type: object
+            required:
+                - id
+                - year
+                - week
+                - name
+            properties:
+                id:
+                    type: integer
+                year:
+                    type: integer
+                week:
+                    type: integer
+                name:
+                    type: string
+
+        MenuRequest:
+            type: object
+            required:
+                - meal
+                - plan
+                - day
+                - course
+            properties:
+                meal:
+                    type: integer
+                plan:
+                    type: integer
+                day:
+                    type: integer
+                course:
+                    type: integer
+
+        MenuResponse:
+            type: object
+            required:
+                - id
+                - meal_id
+                - plan_id
+                - day
+                - course
+            properties:
+                id:
+                    type: integer
+                meal_id:
+                    type: integer
+                plan_id:
+                    type: integer
+                day:
+                    type: integer
+                course:
+                    type: integer
+
+security:
+    - bearerAuth: []
