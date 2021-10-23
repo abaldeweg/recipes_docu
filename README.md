@@ -20,6 +20,8 @@ Management and export of menus.
 
 ## Screenshots
 
+![Screenshot](screenshot.png)
+
 ## Install with Docker
 
 Installation with Docker is the preferred way!
