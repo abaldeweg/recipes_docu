@@ -213,6 +213,7 @@ yarn build
 - VUE_APP_API - URL to the backend
 - VUE_APP_I18N_LOCALE - The locale e.g. `de-DE`
 - VUE_APP_I18N_FALLBACK_LOCALE - Like `VUE_APP_I18N_LOCALE`, but as a last ressort
+- VUE_APP_BASE_URL - The Base URL, in case the app is installed in a subdir.
 
 ## Architecture
 
