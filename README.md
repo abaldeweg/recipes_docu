@@ -39,6 +39,8 @@ DATABASE_NAME=core
 DATABASE_USER=admin
 DATABASE_PASSWORD=password
 DATABASE_ROOT_PASSWORD=password
+PORT_CORE=9001
+PORT_KITCHEN=9002
 
 APP_ENV=prod
 APP_SECRET=secret
@@ -214,6 +216,8 @@ yarn build
 - VUE_APP_I18N_LOCALE - The locale e.g. `de-DE`
 - VUE_APP_I18N_FALLBACK_LOCALE - Like `VUE_APP_I18N_LOCALE`, but as a last ressort
 - VUE_APP_BASE_URL - The Base URL, in case the app is installed in a subdir.
+- PORT_CORE - Port for core
+- PORT_KITCHEN - Port for kitchen
 
 ## Architecture
 
